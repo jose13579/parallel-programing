@@ -1,0 +1,81 @@
+\documentclass[a4paper,12pt]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{enumerate}
+
+\usepackage{xcolor}
+
+\lstdefinestyle{BashInputStyle}{
+	language=bash,
+	basicstyle=\small\sffamily,
+	%numbers=left,
+	%numberstyle=\tiny,
+	numbersep=3pt,
+	frame=tb,
+	columns=fullflexible,
+	backgroundcolor=\color{black!5},
+	linewidth=0.9\linewidth,
+	xleftmargin=0.1\linewidth
+}
+
+
+
+\begin{document}
+\pagenumbering{gobble}
+
+\title{MC970/MO644 -- Programação Paralela}
+\subtitle{Laboratório 10 -- Spark}
+\author{Professor: Guido Araújo \\
+	Monitor: Maicol Gomez Zegarra, Hervé Yviquel}
+\date{}
+
+\maketitle
+
+\section{Analisador de Texto}
+
+Neste laboratório, iremos implementar um analisador/comparador de textos usando Apache Spark.
+
+\section{Enunciado}
+
+Neste exercício o objetivo é desenvolver uma analisador de texto usando Spark baseado na contagem de palavras que foi apresentada na aula. Para facilitar o exercício, o esqueleto do projeto é fornecido. O programa tem como argumento o caminho completo para dois arquivos de texto para analisar. O programa é divido em 2 partes:
+\begin{itemize}
+	\item A primeira parte do programa deve contar as palavras e imprimir na saída padrão as 5 palavras de mais de 3 letras que tem as maiores ocorrências em ordem decrescente para cada texto. O programa deve considerar letras maiúsculas e minúsculas como sendo a mesma letra, além disso deve ignorar caracteres de pontuação para contar as ocorrências (usando
+	 \lstinline[style=BashInputStyle]|replaceAll("[,.!?:;]","")|~). Aconselhamos de començar para dividir o texto a partir dos espaços, depois \textit{limpar} a pontuação, e finalmente contar as palavras. Nota-se que o regex fornecido para limpar as palavras da pontuação não considera todos os casos mas produze as saídas esperadas por Parsusy. 
+	\item Na segunda parte, o programa deve comparar as analises dos 2 textos, e imprimir em ordem alfabética todas as palavras que aparecem mais de 100 vezes em cada um dos dois textos.
+	\item A tercera tarefa é criar um cluster Spark no Microsoft Azure\footnote{Tutorial: https://docs.microsoft.com/en-us/azure/hdinsight/spark/apache-spark-jupyter-spark-sql} e testar a execução na nuvem. Depois da execução, devem analisar a paralelização usando a interface gráfica de profiling do Spark. 
+\end{itemize}
+
+Cuidado de usar as funcões paralelas de Spark e não a biblioteca padrão de Scala.
+
+Caso tenha alguma dúvida, use o Google Groups - para este trabalho está liberado discutir a solução direta do problema. 
+
+\section{Testes e Resultado}
+
+Para compilar o seu programa, pode usar qualquer computador com Spark e sbt instalado (incluindo o servidor mo644 e as máquinas dos labs do IC), e digitar o comando seguinte na pasta própria do programa (contendo o arquivo \textit{build.sbt}):
+\begin{lstlisting}[style=BashInputStyle]
+$ sbt package
+\end{lstlisting}
+
+Para executá-lo, basta digitar no mesmo computador:
+\begin{lstlisting}[style=BashInputStyle]
+$ spark-submit --class Analisador \
+	target/scala-2.11/analisador_2.11-0.1.jar \
+	texto1.txt texto2.txt
+\end{lstlisting}
+
+Há varias maneiras de executá-lo na nuvem mas aconselhamos conectar com SSH no cluster, copiar os arquivos necessários, e usar \lstinline[style=BashInputStyle]|spark-submit| para rodar.
+
+Os testes serão executados em 3 textos abertos e 1 fechado. Todas as combinações de textos serão testadas (então faz 3 testes abertos e 3 fechados). O programa deve imprimir os resultados na saída padrão respeitando o formato. As saídas esperadas dos testes abertos são fornecidas. Os arquivos de entrada contem somente texto sem formatação.
+
+\section{Submissões}
+
+A submissão deve ser \textbf{um arquivo} (em zip) contendo o \textbf{código Scala paralelizado} e um \textbf{relatório curto} (em pdf). O relatório deve comparar o tempo de execução local e de execução no cluster. Alem disso, o relatório deve conter uma captura de ecrã da interface gráfica de profiling do Spark mostrando a execução nos núcleos do cluster em paralela.
+
+\end{document}
